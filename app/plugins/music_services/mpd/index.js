@@ -68,7 +68,8 @@ ControllerMpd.prototype.loadPlaylist = function(data) {
 	var self = this;
 	self.commandRouter.pushToastMessage('Success','',data + ' Added');
 
-	return self.sendMpdCommand('load', data);
+	self.logger.info("Adding m3u playlist "+data);
+	return self.sendMpdCommand('load', [data]);
 };
 //MPD Remove
 ControllerMpd.prototype.remove = function(position) {
