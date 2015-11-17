@@ -1,6 +1,7 @@
 var libQ = require('kew');
 var libFast = require('fast.js');
 var fs=require('fs-extra');
+var S = require('string');
 
 module.exports = PlaylistManager;
 
@@ -339,9 +340,9 @@ PlaylistManager.prototype.commonPlayPlaylist = function(folder,name) {
 		else
 		{
 			//check if file ends with .m3u extension
-			if()
+			if(S(name).endsWith('.m3u'))
 			{
-				promise=self.commandRouter.executeOnPlugin('music_service', 'mpd', 'loadPlaylist', filePath);
+				promise=self.commandRouter.executeOnPlugin('music_service', 'mpd', 'loadPlaylist', S(name).chompRight(4).s);
 				promise.then(function(result)
 				{
 					defer.resolve({success:true});
