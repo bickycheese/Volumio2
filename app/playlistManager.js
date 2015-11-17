@@ -340,6 +340,9 @@ PlaylistManager.prototype.commonPlayPlaylist = function(folder,name) {
 		else
 		{
 			//check if file ends with .m3u extension
+			self.logger.info("NAME: "+name);
+			self.logger.info("GUARDIA: "+S(name).endsWith('.m3u'));
+			self.logger.info("PLAYLISTNAME "+ S(name).chompRight(4).s);
 			if(S(name).endsWith('.m3u'))
 			{
 				promise=self.commandRouter.executeOnPlugin('music_service', 'mpd', 'loadPlaylist', S(name).chompRight(4).s);
