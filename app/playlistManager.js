@@ -338,40 +338,56 @@ PlaylistManager.prototype.commonPlayPlaylist = function(folder,name) {
 			defer.resolve({success:false,reason:'Playlist does not exist'});
 		else
 		{
-			fs.readJson(filePath, function (err, data) {
-				if(err)
-					defer.resolve({success:false});
-				else
+			//check if file ends with .m3u extension
+			if()
+			{
+				promise=self.commandRouter.executeOnPlugin('music_service', 'mpd', 'loadPlaylist', filePath);
+				promise.then(function(result)
 				{
-					self.commandRouter.volumioClearQueue();
+					defer.resolve({success:true});
+				}).fail(function (e) {
+					defer.resolve({success:false,reason:e});
+				});
+			}
+			else
+			{
+				fs.readJson(filePath, function (err, data) {
+					if(err)
+						defer.resolve({success:false});
+					else
+					{
+						self.commandRouter.volumioClearQueue();
 
-					var promises=[];
-					var promise;
+						var promises=[];
+						var promise;
 
-					self.commandRouter.executeOnPlugin('music_service', 'mpd', 'clear')
-						.then(function(result){
-							for(var i in data)
-							{
-								promise=self.commandRouter.executeOnPlugin('music_service', 'mpd', 'add', data[i].uri);
-								promises.push(promise);
-							}
+						self.commandRouter.executeOnPlugin('music_service', 'mpd', 'clear')
+								.then(function(result){
+									for(var i in data)
+									{
+										promise=self.commandRouter.executeOnPlugin('music_service', 'mpd', 'add', data[i].uri);
+										promises.push(promise);
+									}
 
-							libQ.all(promises)
-								.then(function(data){
-									self.commandRouter.executeOnPlugin('music_service', 'mpd', 'resume');
-									defer.resolve({success:true});
+									libQ.all(promises)
+											.then(function(data){
+												self.commandRouter.executeOnPlugin('music_service', 'mpd', 'resume');
+												defer.resolve({success:true});
+											})
+											.fail(function (e) {
+												defer.resolve({success:false,reason:e});
+											});
 								})
 								.fail(function (e) {
 									defer.resolve({success:false,reason:e});
 								});
-						})
-						.fail(function (e) {
-							defer.resolve({success:false,reason:e});
-						});
 
 
-				}
-			});
+					}
+				});
+			}
+
+
 		}
 
 	});

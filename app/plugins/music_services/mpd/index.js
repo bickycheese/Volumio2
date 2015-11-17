@@ -63,6 +63,13 @@ ControllerMpd.prototype.add = function(data) {
 
 	return self.sendMpdCommand('add', [data]);
 };
+
+ControllerMpd.prototype.loadPlaylist = function(data) {
+	var self = this;
+	self.commandRouter.pushToastMessage('Success','',data + ' Added');
+
+	return self.sendMpdCommand('load', data);
+};
 //MPD Remove
 ControllerMpd.prototype.remove = function(position) {
 	var self = this;
